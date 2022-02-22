@@ -45,5 +45,5 @@ class TravelTime(Resource):
 api.add_resource(TravelTime, '/travelTime')
 
 if __name__ == '__main__':
-    app.run(debug=True)  # Local server
+    # app.run(debug=True)  # Local server
     app.run(host='info802-service-rest.herokuapp.com', debug=True)  # Heroku server
