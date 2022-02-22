@@ -1,63 +1,48 @@
+from _datetime import time
+
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 
 app = Flask(__name__)
 api = Api(app)
 
-TODOS = {
-    'todo1': {'task': 'build an API'},
-    'todo2': {'task': '?????'},
-    'todo3': {'task': 'profit!'},
-}
-
-
-def abort_if_todo_doesnt_exist(todo_id):
-    if todo_id not in TODOS:
-        abort(404, message="Todo {} doesn't exist".format(todo_id))
-
+# Faire l'equivalent pour notre class
+# def abort_if_todo_doesnt_exist(todo_id):
+#     if todo_id not in TODOS:
+#         abort(404, message="Todo {} doesn't exist".format(todo_id))
 
 parser = reqparse.RequestParser()
-parser.add_argument('task')
+parser.add_argument('km', int)
+parser.add_argument('autonomy', int)
+parser.add_argument('reload_time', int)
 
-
-# Todo
-# shows a single todo item and lets you delete a todo item
-class Todo(Resource):
-    def get(self, todo_id):
-        abort_if_todo_doesnt_exist(todo_id)
-        return TODOS[todo_id]
-
-    def delete(self, todo_id):
-        abort_if_todo_doesnt_exist(todo_id)
-        del TODOS[todo_id]
-        return '', 204
-
-    def put(self, todo_id):
-        args = parser.parse_args()
-        task = {'task': args['task']}
-        TODOS[todo_id] = task
-        return task, 201
-
-
-# TodoList
-# shows a list of all todos, and lets you POST to add new tasks
-class TodoList(Resource):
+# Pour le moment on part du principe que l'ont roule a une vitesse moyenne de 100km/h
+class TravelTime(Resource):
     def get(self):
-        return TODOS
+        # Args
+        args = parser.parse_args()
+        km: int = int(args['km'])  # Km to parcours
+        autonomy: int = int(args['autonomy'])  # KM / charge
+        reload: int = int(args['reload_time'])  # temps de chargement optimal
+        vit_kmh = 100
+        vit_kmm = vit_kmh / 24
+        print(vit_kmm)
+
+        nb_reload: int = int(km / autonomy) - 1
+        hours = int(int(nb_reload * reload // 60) + (int(km / 100)))
+        mints = int((nb_reload * reload % 60) + int((km % 100) / vit_kmm))
+        res: time = time(hour=hours, minute=mints, second=int((km % 100) % vit_kmm))
+        return res.strftime("%H:%M:%S")
 
     def post(self):
-        args = parser.parse_args()
-        todo_id = int(max(TODOS.keys()).lstrip('todo')) + 1
-        todo_id = 'todo%i' % todo_id
-        TODOS[todo_id] = {'task': args['task']}
-        return TODOS[todo_id], 201
+        return "km - autonomy - reload_time"
+
 
 
 ##
 ## Actually setup the Api resource routing here
 ##
-api.add_resource(TodoList, '/todos')
-api.add_resource(Todo, '/todos/<todo_id>')
+api.add_resource(TravelTime, '/travelTime')
 
 if __name__ == '__main__':
     app.run(debug=True)
