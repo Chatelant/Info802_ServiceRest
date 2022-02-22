@@ -1,7 +1,7 @@
 from _datetime import time
 
 from flask import Flask
-from flask_restful import reqparse, abort, Api, Resource
+from flask_restful import reqparse, Api, Resource
 
 app = Flask(__name__)
 api = Api(app)
@@ -15,6 +15,7 @@ parser = reqparse.RequestParser()
 parser.add_argument('km', int)
 parser.add_argument('autonomy', int)
 parser.add_argument('reload_time', int)
+
 
 # Pour le moment on part du principe que l'ont roule a une vitesse moyenne de 100km/h
 class TravelTime(Resource):
@@ -38,13 +39,11 @@ class TravelTime(Resource):
         return "km - autonomy - reload_time"
 
 
-
 ##
 ## Actually setup the Api resource routing here
 ##
 api.add_resource(TravelTime, '/travelTime')
 
 if __name__ == '__main__':
-    # app.run(debug=True) # Local server
-    app.run(host='0.0.0.1', port=34999, debug=True) # Heroku server
-
+    app.run(debug=True)  # Local server
+    app.run(host='info802-service-rest.herokuapp.com', debug=True)  # Heroku server
