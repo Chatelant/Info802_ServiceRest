@@ -1,5 +1,5 @@
 from _datetime import time
-
+import json
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
 
@@ -20,6 +20,7 @@ parser.add_argument('reload_time', int)
 # Pour le moment on part du principe que l'ont roule a une vitesse moyenne de 100km/h
 class TravelTime(Resource):
     def get(self):
+        # nb arret , temps rechargement + temps de route estimé
         # Args
         args = parser.parse_args()
         km: int = int(args['km'])  # Km to parcours
@@ -33,7 +34,7 @@ class TravelTime(Resource):
         hours = int(int(nb_reload * reload // 60) + (int(km / 100)))
         mints = int((nb_reload * reload % 60) + int((km % 100) / vit_kmm))
         res: time = time(hour=hours, minute=mints, second=int((km % 100) % vit_kmm))
-        return res.strftime("%H:%M:%S")
+        return json.dumps({'value': res.strftime("%H:%M:%S")})
 
     def post(self):
         return "km - autonomy - reload_time"
