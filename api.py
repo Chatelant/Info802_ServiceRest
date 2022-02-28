@@ -23,10 +23,10 @@ class TravelTime(Resource):
         # nb arret , temps rechargement + temps de route estimé
         # Args
         args = parser.parse_args()
-        km = args['km']  # km à parcourir
-        autonomy = args['autonomy']  # km / charge
-        reload = args['reload_time']  # temps de chargement optimal en minutes
-        travel_time = args['travel_time']  # temps de trajet en minutes
+        km = int(args['km'])  # km à parcourir
+        autonomy = int(args['autonomy'])  # km / charge
+        reload = int(args['reload_time'])  # temps de chargement optimal en minutes
+        travel_time = int(args['travel_time'])  # temps de trajet en minutes
 
         total_time = travel_time + (km // autonomy) * reload
 
