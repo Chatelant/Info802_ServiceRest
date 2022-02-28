@@ -46,4 +46,4 @@ api.add_resource(TravelTime, '/travelTime')
 
 if __name__ == '__main__':
     # app.run(debug=True) # Local server
-    app.run(host='0.0.0.0', port=34999, debug=True)  # Heroku server
+    app.run(debug=True)  # Heroku server
