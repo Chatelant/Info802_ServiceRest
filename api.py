@@ -16,6 +16,7 @@ parser.add_argument('km', int)
 parser.add_argument('autonomy', int)
 parser.add_argument('reload_time', int)
 
+
 # Pour le moment on part du principe que l'ont roule a une vitesse moyenne de 100km/h
 class TravelTime(Resource):
     def get(self):
@@ -38,7 +39,6 @@ class TravelTime(Resource):
         return "km - autonomy - reload_time"
 
 
-
 ##
 ## Actually setup the Api resource routing here
 ##
@@ -46,5 +46,4 @@ api.add_resource(TravelTime, '/travelTime')
 
 if __name__ == '__main__':
     # app.run(debug=True) # Local server
-    app.run(host='0.0.0.0', port=34999, debug=True) # Heroku server
-
+    app.run(host='0.0.0.0', port=34999, debug=True)  # Heroku server
