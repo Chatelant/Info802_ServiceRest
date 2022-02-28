@@ -2,8 +2,10 @@ from _datetime import time
 import json
 from flask import Flask
 from flask_restful import reqparse, abort, Api, Resource
+from flask_cors import CORS
 
 app = Flask(__name__)
+cors = CORS(app, ressources={r"/travelTime*": {"origins": "*"}})
 api = Api(app)
 
 # Faire l'equivalent pour notre class
