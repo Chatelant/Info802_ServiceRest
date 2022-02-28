@@ -1,22 +1,20 @@
-from _datetime import time
-import json
-from flask import Flask
-from flask_restful import reqparse, abort, Api, Resource
+from flask import Flask, jsonify
+from flask_restful import reqparse, Api, Resource
 from flask_cors import CORS
 
 app = Flask(__name__)
-cors = CORS(app, ressources={r"/travelTime*": {"origins": "*"}})
+cors = CORS(app)
 api = Api(app)
 
-# Faire l'equivalent pour notre class
-# def abort_if_todo_doesnt_exist(todo_id):
-#     if todo_id not in TODOS:
-#         abort(404, message="Todo {} doesn't exist".format(todo_id))
 
 parser = reqparse.RequestParser()
 parser.add_argument('km', int)
 parser.add_argument('autonomy', int)
 parser.add_argument('reload_time', int)
+parser.add_argument('travel_time', int)
+
+
+# fetch("http://127.0.0.1:5000/travelTime?autonomy=100&reload_time=600&km=220&travel_time=600").then(r => r.json()).then(r => console.log(r))
 
 
 # Pour le moment on part du principe que l'ont roule a une vitesse moyenne de 100km/h
@@ -25,28 +23,20 @@ class TravelTime(Resource):
         # nb arret , temps rechargement + temps de route estimé
         # Args
         args = parser.parse_args()
-        km: int = int(args['km'])  # Km to parcours
-        autonomy: int = int(args['autonomy'])  # KM / charge
-        reload: int = int(args['reload_time'])  # temps de chargement optimal
-        vit_kmh = 100
-        vit_kmm = vit_kmh / 24
-        print(vit_kmm)
+        km = args['km']  # km à parcourir
+        autonomy = args['autonomy']  # km / charge
+        reload = args['reload_time']  # temps de chargement optimal en minutes
+        travel_time = args['travel_time']  # temps de trajet en minutes
 
-        nb_reload: int = int(km / autonomy) - 1
-        hours = int(int(nb_reload * reload // 60) + (int(km / 100)))
-        mints = int((nb_reload * reload % 60) + int((km % 100) / vit_kmm))
-        res: time = time(hour=hours, minute=mints, second=int((km % 100) % vit_kmm))
-        return json.dumps({'value': res.strftime("%H:%M:%S")})
+        total_time = travel_time + (km // autonomy) * reload
+
+        return jsonify({'minutes': total_time})
 
     def post(self):
         return "km - autonomy - reload_time"
 
 
-##
-## Actually setup the Api resource routing here
-##
 api.add_resource(TravelTime, '/travelTime')
 
 if __name__ == '__main__':
-    # app.run(debug=True) # Local server
-    app.run(debug=True)  # Heroku server
+    app.run(debug=True)
